@@ -1,7 +1,7 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import SubmitIdea from './pages/SubmitIdea';
-import Dashboard from './pages/Dashboard';
-import IdeaDetail from './pages/IdeaDetail';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import SubmitIdea from "./pages/SubmitIdea";
+import Dashboard from "./pages/Dashboard";
+import IdeaDetail from "./pages/IdeaDetail";
 
 function App() {
   return (
