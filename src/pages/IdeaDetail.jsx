@@ -53,41 +53,48 @@ function IdeaDetail() {
 
   if (loading)
     return (
-      <p style={{ textAlign: "center", marginTop: "60px" }}>
+      <p className="text-center mt-20 text-gray-500">
         Loading report...
       </p>
     );
+
   if (!idea) return null;
 
   return (
-    <div style={{ maxWidth: "800px", margin: "60px auto", padding: "0 20px" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Link
-          to="/dashboard"
-          style={{ display: "block", marginBottom: "24px" }}
-        >
-          ← Back to Dashboard
-        </Link>
-        <button
-          onClick={handleExportPDF}
-          disabled={exporting}
-          style={{ padding: "8px 16px", cursor: "pointer" }}
-        >
-          {exporting ? "Exporting..." : "Export PDF"}
-        </button>
-      </div>
+    <div className="min-h-screen bg-gray-50 px-4 py-12">
+      <div className="max-w-3xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <Link
+            to="/dashboard"
+            className="text-sm text-gray-600 hover:underline"
+          >
+            ← Back
+          </Link>
 
-      <div ref={reportRef}>
-        <h1>{idea.title}</h1>
-        <p style={{ color: "#666" }}>{idea.description}</p>
-        <hr />
-        <ReportCard report={idea.report} />
+          <button
+            onClick={handleExportPDF}
+            disabled={exporting}
+            className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
+          >
+            {exporting ? "Exporting..." : "Export PDF"}
+          </button>
+        </div>
+
+        <div
+          ref={reportRef}
+          className="bg-white p-6 rounded-2xl shadow"
+        >
+          <h1 className="text-2xl font-bold">
+            {idea.title}
+          </h1>
+          <p className="text-gray-600 mt-2">
+            {idea.description}
+          </p>
+
+          <div className="border-t my-6"></div>
+
+          <ReportCard report={idea.report} />
+        </div>
       </div>
     </div>
   );

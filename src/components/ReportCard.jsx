@@ -1,36 +1,25 @@
 function ReportCard({ report }) {
   const riskColor = {
-    Low: "green",
-    Medium: "orange",
-    High: "red",
+    Low: "text-green-600",
+    Medium: "text-yellow-500",
+    High: "text-red-600",
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "24px",
-        marginTop: "24px",
-      }}
-    >
+    <div className="flex flex-col gap-6 mt-6">
       <Section title="Problem Summary" content={report.problem} />
       <Section title="Customer Persona" content={report.customer} />
       <Section title="Market Overview" content={report.market} />
 
       <div>
-        <h3>Competitors</h3>
+        <h3 className="font-semibold mb-2">Competitors</h3>
         {report.competitor.map((c) => (
           <div
             key={c.name}
-            style={{
-              marginBottom: "8px",
-              paddingLeft: "12px",
-              borderLeft: "3px solid #ddd",
-            }}
+            className="border-l-4 border-gray-300 pl-3 mb-2"
           >
-            <strong>{c.name}</strong>
-            <p style={{ margin: "4px 0", color: "#555" }}>
+            <p className="font-medium">{c.name}</p>
+            <p className="text-gray-600 text-sm">
               {c.differentiation}
             </p>
           </div>
@@ -38,17 +27,14 @@ function ReportCard({ report }) {
       </div>
 
       <div>
-        <h3>Suggested Tech Stack</h3>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+        <h3 className="font-semibold mb-2">
+          Suggested Tech Stack
+        </h3>
+        <div className="flex flex-wrap gap-2">
           {report.tech_stack.map((tech) => (
             <span
               key={tech}
-              style={{
-                background: "#f0f0f0",
-                padding: "4px 12px",
-                borderRadius: "20px",
-                fontSize: "14px",
-              }}
+              className="bg-gray-100 px-3 py-1 rounded-full text-sm"
             >
               {tech}
             </span>
@@ -56,29 +42,35 @@ function ReportCard({ report }) {
         </div>
       </div>
 
-      <div style={{ display: "flex", gap: "32px", alignItems: "center" }}>
+      <div className="flex gap-10 items-center">
         <div>
-          <h3>Risk Level</h3>
-          <span
-            style={{
-              color: riskColor[report.risk_level] || "black",
-              fontWeight: "bold",
-              fontSize: "18px",
-            }}
+          <h3 className="font-semibold">Risk Level</h3>
+          <p
+            className={`font-bold text-lg ${
+              riskColor[report.risk_level]
+            }`}
           >
             {report.risk_level}
-          </span>
+          </p>
         </div>
+
         <div>
-          <h3>Profitability Score</h3>
-          <span style={{ fontSize: "32px", fontWeight: "bold" }}>
+          <h3 className="font-semibold">
+            Profitability Score
+          </h3>
+          <p className="text-3xl font-bold">
             {report.profitability_score}
-            <span style={{ fontSize: "16px", color: "#999" }}>/100</span>
-          </span>
+            <span className="text-sm text-gray-400">
+              /100
+            </span>
+          </p>
         </div>
       </div>
 
-      <Section title="Justification" content={report.justification} />
+      <Section
+        title="Justification"
+        content={report.justification}
+      />
     </div>
   );
 }
@@ -86,8 +78,10 @@ function ReportCard({ report }) {
 function Section({ title, content }) {
   return (
     <div>
-      <h3>{title}</h3>
-      <p style={{ color: "#444", lineHeight: "1.6" }}>{content}</p>
+      <h3 className="font-semibold mb-1">{title}</h3>
+      <p className="text-gray-700 leading-relaxed">
+        {content}
+      </p>
     </div>
   );
 }
