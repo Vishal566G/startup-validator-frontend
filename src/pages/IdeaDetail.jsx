@@ -35,9 +35,21 @@ function IdeaDetail() {
 
     try {
       setExporting(true);
-      const canvas = await html2canvas(reportRef.current, { scale: 2 });
-      const imgData = canvas.toDataURL("image/png");
+      const canvas = await html2canvas(reportRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        onclone: (document) => {
+          const elements = document.querySelectorAll("*");
+          elements.forEach((el) => {
+            const style = el.style;
+            style.color = style.color || "#000000";
+            style.backgroundColor = style.backgroundColor || "transparent";
+          });
+        },
+      });
 
+      const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
@@ -52,11 +64,7 @@ function IdeaDetail() {
   };
 
   if (loading)
-    return (
-      <p className="text-center mt-20 text-gray-500">
-        Loading report...
-      </p>
-    );
+    return <p className="text-center mt-20 text-gray-500">Loading report...</p>;
 
   if (!idea) return null;
 
@@ -80,16 +88,9 @@ function IdeaDetail() {
           </button>
         </div>
 
-        <div
-          ref={reportRef}
-          className="bg-white p-6 rounded-2xl shadow"
-        >
-          <h1 className="text-2xl font-bold">
-            {idea.title}
-          </h1>
-          <p className="text-gray-600 mt-2">
-            {idea.description}
-          </p>
+        <div ref={reportRef} className="bg-white p-6 rounded-2xl shadow">
+          <h1 className="text-2xl font-bold">{idea.title}</h1>
+          <p className="text-gray-600 mt-2">{idea.description}</p>
 
           <div className="border-t my-6"></div>
 
