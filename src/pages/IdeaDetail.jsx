@@ -3,7 +3,6 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { getIdeaById } from "../api";
 import ReportCard from "../components/ReportCard";
 import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 
 function IdeaDetail() {
   const { id } = useParams();
@@ -30,31 +29,96 @@ function IdeaDetail() {
     fetchIdea();
   }, [id]);
 
-  const handleExportPDF = async () => {
-    if (!reportRef.current) return;
+  const handleExportPDF = () => {
+    if (!idea) return;
 
     try {
       setExporting(true);
-      const canvas = await html2canvas(reportRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-        onclone: (document) => {
-          const elements = document.querySelectorAll("*");
-          elements.forEach((el) => {
-            const style = el.style;
-            style.color = style.color || "#000000";
-            style.backgroundColor = style.backgroundColor || "transparent";
-          });
-        },
-      });
-
-      const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const report = idea.report;
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const margin = 16;
+      const maxWidth = pageWidth - margin * 2;
+      let y = 20;
 
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      const addText = (
+        text,
+        fontSize = 12,
+        isBold = false,
+        color = [0, 0, 0],
+      ) => {
+        pdf.setFontSize(fontSize);
+        pdf.setFont("helvetica", isBold ? "bold" : "normal");
+        pdf.setTextColor(...color);
+        const lines = pdf.splitTextToSize(String(text), maxWidth);
+        lines.forEach((line) => {
+          if (y > 270) {
+            pdf.addPage();
+            y = 20;
+          }
+          pdf.text(line, margin, y);
+          y += fontSize * 0.5;
+        });
+        y += 4;
+      };
+
+      const addDivider = () => {
+        pdf.setDrawColor(200, 200, 200);
+        pdf.line(margin, y, pageWidth - margin, y);
+        y += 6;
+      };
+
+      // Title
+      addText(idea.title, 22, true, [30, 30, 30]);
+      addText(idea.description, 11, false, [100, 100, 100]);
+      addDivider();
+
+      // Sections
+      addText("Problem Summary", 14, true);
+      addText(report.problem, 11);
+      addDivider();
+
+      addText("Customer Persona", 14, true);
+      addText(report.customer, 11);
+      addDivider();
+
+      addText("Market Overview", 14, true);
+      addText(report.market, 11);
+      addDivider();
+
+      addText("Competitors", 14, true);
+      report.competitor.forEach((c, i) => {
+        addText(`${i + 1}. ${c.name}`, 11, true);
+        addText(c.differentiation, 11);
+      });
+      addDivider();
+
+      addText("Suggested Tech Stack", 14, true);
+      addText(report.tech_stack.join(", "), 11);
+      addDivider();
+
+      // Risk + Score
+      const riskColors = {
+        Low: [34, 139, 34],
+        Medium: [255, 140, 0],
+        High: [200, 0, 0],
+      };
+      addText("Risk Level", 14, true);
+      addText(
+        report.risk_level,
+        12,
+        true,
+        riskColors[report.risk_level] || [0, 0, 0],
+      );
+      y += 2;
+
+      addText("Profitability Score", 14, true);
+      addText(`${report.profitability_score} / 100`, 12, true, [30, 100, 200]);
+      addDivider();
+
+      addText("Justification", 14, true);
+      addText(report.justification, 11);
+
       pdf.save(`${idea.title}-report.pdf`);
     } catch (err) {
       console.error("PDF export failed", err);
